@@ -15,7 +15,7 @@ class UserMill extends Model
     CONST WORK_ORDER = 3;       // 工单中
 
     protected $fillable = [
-        'user_id','mill_group_id','mill_number','vga_type','vga_number','ip','power','status','24h_anomaly','24h_online',
+        'user_id','mill_group_id','mill_number','vga_type','vga_number','ip','power','status','anomaly_24hr','online_24hr',
         'remark',
     ];
 }

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
+use App\Models\UserMill;
 use App\Repositories\UserMillRepository;
+use App\Transformers\UserMillTransformer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -12,10 +15,51 @@ class UserMillController extends Controller
 
     public function mills(Request $request)
     {
-
         try{
+            $user = Auth::user();
+            $groupId = $request->input('group_id');
+            $keywords = $request->input('keywords');
+            if( !isset($groupId) ){
+                if( isset($keywords) ){
+                    $millList = UserMill::query()
+                        ->where([
+                            ['user_id', '=', $user->id],
+                            ['mill_number', 'like', '%'.$keywords.'%']
+                        ])
+                        ->orWhere([
+                            ['user_id', '=', $user->id],
+                            ['ip', 'like', '%'.$keywords.'%']
+                        ])->latest()->paginate(10);
+                }else{
+                    $millList = UserMill::query()
+                        ->where('user_id',$user->id)
+                        ->latest()
+                        ->paginate(10);
+                }
+            }else{
+                if( isset($keywords) ){
+                    $millList = UserMill::query()
+                        ->where([
+                            ['user_id', '=', $user->id],
+                            ['mill_group_id', '=', $groupId],
+                            ['mill_number', 'like', '%'.$keywords.'%']
+                        ])
+                        ->orWhere([
+                            ['user_id', '=', $user->id],
+                            ['mill_group_id', '=', $groupId],
+                            ['ip', 'like', '%'.$keywords.'%']
+                        ])->latest()->paginate(10);
+                }else{
+                    $millList = UserMill::query()
+                        ->where('user_id',$user->id)
+                        ->where('mill_group_id', $groupId)
+                        ->latest()
+                        ->paginate(10);
+                }
+            }
 
-            return $this->responseSuccess('success');
+            $millList = fractal($millList, new UserMillTransformer());
+            return $this->responseSuccess('success',$millList);
         }catch (\Exception $e){
             return $this->responseError($e->getMessage());
         }

@@ -33,6 +33,7 @@ Route::group( [ 'domain'=>env('API_DOMAIN'),'namespace'=>'Api' ], function () {
         Route::post('modify/electricity/loss','UserController@modifyElectricityLoss');
         Route::post('send/mail/verify/code', 'LoginController@mailVerifyCode');
 
+        Route::get('mill/list','UserMillController@mills');
         Route::post('mill/create','UserMillController@createMill');
         Route::post('mill/modify','UserMillController@modifyMill');
 

@@ -108,4 +108,14 @@ class Controller extends BaseController
 
         return env('STATIC_DOMAIN') . '/storage/photo/'. $directory .'/' . $fileName;
     }
+
+    /**
+     * 分页对象解析
+     * @param $parse
+     * @return mixed
+     */
+    public function parsePage($parse)
+    {
+        return json_decode(json_encode($parse), true);
+    }
 }
